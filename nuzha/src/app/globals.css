@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+/* ---------- Nuzha tokens (mirrors the Figma Color collection) ---------- */
+:root,
+[data-theme="arcade-light"] {
+  --bg-page: #f4f0e8;
+  --bg-surface: #ffffff;
+  --bg-raised: #fbf9f5;
+  --bg-muted: #e8e2d6;
+  --bg-inverse: #141a26;
+  --text-primary: #141a26;
+  --text-secondary: #5a6272;
+  --text-inverse: #fbf9f5;
+  --text-on-accent: #ffffff;
+  --text-disabled: #c9cdd6;
+  --accent: #b4603a;
+  --accent-hover: #8e4a2b;
+  --accent-subtle: #f5e1d6;
+  --secondary: #7b8a6b;
+  --secondary-subtle: #e3e8de;
+  --highlight: #c4a15a;
+  --highlight-subtle: #f4ebd3;
+  --border: #d6cebd;
+  --border-strong: #141a26;
+  --border-focus: #b4603a;
+  --error: #b5473c;
+  --error-subtle: #f6e0dd;
+  --success: #5d6a50;
+  --success-subtle: #e3e8de;
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --shadow-sm: 0 1px 2px rgba(20, 26, 38, 0.06), 0 2px 8px rgba(20, 26, 38, 0.06);
+  --shadow-md: 0 4px 12px rgba(20, 26, 38, 0.08), 0 8px 24px rgba(20, 26, 38, 0.1);
+  --shadow-lg: 0 16px 48px rgba(20, 26, 38, 0.14);
+  color-scheme: light;
+}
+
+[data-theme="arcade-dark"] {
+  --bg-page: #0b0f18;
+  --bg-surface: #141a26;
+  --bg-raised: #2a3242;
+  --bg-muted: #2a3242;
+  --bg-inverse: #f4f0e8;
+  --text-primary: #fbf9f5;
+  --text-secondary: #b8ad98;
+  --text-inverse: #0b0f18;
+  --text-on-accent: #0b0f18;
+  --text-disabled: #5a6272;
+  --accent: #dba084;
+  --accent-hover: #f5e1d6;
+  --accent-subtle: #5e3120;
+  --secondary: #afbba6;
+  --secondary-subtle: #3c4533;
+  --highlight: #e0cb94;
+  --highlight-subtle: #66522a;
+  --border: #2a3242;
+  --border-strong: #f4f0e8;
+  --border-focus: #dba084;
+  --error: #d98a80;
+  --error-subtle: #5a2420;
+  --success: #afbba6;
+  --success-subtle: #3c4533;
+  color-scheme: dark;
+}
+
+[data-theme="harbour"] {
+  --bg-page: #e6eeea;
+  --bg-surface: #ffffff;
+  --bg-raised: #f3f7f5;
+  --bg-muted: #d7e2dc;
+  --bg-inverse: #0f2b3b;
+  --text-primary: #0f2b3b;
+  --text-secondary: #4f6673;
+  --text-inverse: #e6eeea;
+  --accent: #df6e52;
+  --accent-hover: #b8503a;
+  --accent-subtle: #f9e2db;
+  --secondary: #2f7b78;
+  --secondary-subtle: #d8ebe9;
+  --highlight: #c9a76a;
+  --highlight-subtle: #e6d6b4;
+  --border: #c5d3cc;
+  --border-strong: #0f2b3b;
+  --border-focus: #df6e52;
+  --success: #2f7b78;
+  --success-subtle: #d8ebe9;
+}
+
+[data-theme="stroll"] {
+  --bg-page: #fbf8f3;
+  --bg-surface: #ffffff;
+  --bg-raised: #fdfcf9;
+  --bg-muted: #efe9e0;
+  --bg-inverse: #3b2a24;
+  --text-primary: #3b2a24;
+  --text-secondary: #7a6a63;
+  --text-inverse: #fbf8f3;
+  --accent: #d9834a;
+  --accent-hover: #b3652f;
+  --accent-subtle: #fbe7d8;
+  --secondary: #8ea37c;
+  --secondary-subtle: #c5d3b5;
+  --highlight: #7f9bb8;
+  --highlight-subtle: #a9c0d6;
+  --border: #e3d9cc;
+  --border-strong: #3b2a24;
+  --border-focus: #d9834a;
+  --success: #6f8a5c;
+  --success-subtle: #c5d3b5;
+}
+
+/* Fonts switch with writing direction */
+:root {
+  --font-display-active: var(--font-fraunces);
+  --font-sans-active: var(--font-figtree);
+}
+[dir="rtl"] {
+  --font-display-active: var(--font-amiri);
+  --font-sans-active: var(--font-readex);
+}
+
+@theme inline {
+  --color-page: var(--bg-page);
+  --color-surface: var(--bg-surface);
+  --color-raised: var(--bg-raised);
+  --color-muted: var(--bg-muted);
+  --color-inverse: var(--bg-inverse);
+  --color-ink: var(--text-primary);
+  --color-ink-2: var(--text-secondary);
+  --color-ink-inv: var(--text-inverse);
+  --color-on-accent: var(--text-on-accent);
+  --color-disabled: var(--text-disabled);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-secondary: var(--secondary);
+  --color-secondary-subtle: var(--secondary-subtle);
+  --color-highlight: var(--highlight);
+  --color-highlight-subtle: var(--highlight-subtle);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-focus: var(--border-focus);
+  --color-error: var(--error);
+  --color-error-subtle: var(--error-subtle);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --font-display: var(--font-display-active);
+  --font-sans: var(--font-sans-active);
+  --font-price: var(--font-dm);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
+
+html {
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+body {
+  font-family: var(--font-sans-active), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.font-display {
+  letter-spacing: -0.02em;
+}
+[dir="rtl"] .font-display {
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+.num {
+  font-family: var(--font-dm), var(--font-figtree), sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+input,
+textarea,
+select {
+  font: inherit;
+}
+::selection {
+  background: var(--accent-subtle);
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
