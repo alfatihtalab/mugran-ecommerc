@@ -18,4 +18,4 @@ export function Panel({ title, action, children, className = "" }: { title?: Rea
 export function KV({ k, v }: { k: string; v: React.ReactNode }) {
   return <div className="flex items-center justify-between gap-4 text-sm"><span className="text-ink-2">{k}</span><span className="num text-end text-ink">{v}</span></div>;
 }
-export const payLabel = (p: string, last4?: string) => (p === "cod" ? "Cash on delivery" : `${p === "mada" ? "Mada" : p === "card" ? "Card" : "Apple Pay"}${last4 ? ` •••• ${last4}` : ""}`);
+export const payLabel = (p: string, last4?: string) => (p === "cod" ? "Cash on delivery" : `${p === "tabby" ? "Tabby" : p === "card" ? "Card" : "Apple Pay"}${last4 ? ` •••• ${last4}` : ""}`);

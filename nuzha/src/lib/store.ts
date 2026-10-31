@@ -6,7 +6,7 @@ import { COD_FEE, FREE_SHIPPING_OVER, SHIPPING, VAT } from "./format";
 
 export type ThemeId = "arcade-light" | "arcade-dark" | "harbour" | "stroll";
 export type ShippingMethod = keyof typeof SHIPPING;
-export type PaymentMethod = "mada" | "card" | "applepay" | "cod";
+export type PaymentMethod = "tabby" | "card" | "applepay" | "cod";
 export type OrderStatus = "paid" | "cod" | "fulfilled" | "shipped" | "refunded" | "partially_refunded";
 
 export interface CartLine { key: string; productId: string; colour: string; size?: string; qty: number; }
@@ -21,7 +21,7 @@ export interface Order {
   refunded: number; timeline: TimelineEvent[]; note?: string;
 }
 export interface Settings {
-  payments: Record<PaymentMethod | "tabby", boolean>;
+  payments: Record<PaymentMethod, boolean>;
   locales: { ar: boolean };
   freeShippingOver: number;
   storeName: string;
@@ -50,21 +50,21 @@ const seedItem = (id: string, colour: string, qty: number, size?: string): Order
 const seedOrder = (id: number, hours: number, name: string, email: string, items: OrderItem[], status: OrderStatus, payment: PaymentMethod, refunded = 0): Order => {
   const t = computeTotals(items, "standard", payment, 0);
   const tl: TimelineEvent[] = [{ at: d(hours), title: "Order placed", detail: "web (EN)" }];
-  if (payment !== "cod") tl.push({ at: d(hours), title: "Payment captured", detail: payment === "mada" ? "Mada" : payment === "card" ? "Visa" : "Apple Pay" });
-  if (status === "fulfilled" || status === "shipped") tl.push({ at: d(hours - 6), title: "Packed", detail: "Riyadh warehouse" });
+  if (payment !== "cod") tl.push({ at: d(hours), title: "Payment captured", detail: payment === "tabby" ? "Tabby" : payment === "card" ? "Visa" : "Apple Pay" });
+  if (status === "fulfilled" || status === "shipped") tl.push({ at: d(hours - 6), title: "Packed", detail: "Dubai warehouse" });
   if (status === "shipped") tl.push({ at: d(hours - 10), title: "Shipped", detail: "Aramex · 4421 9930 11" });
   if (refunded > 0) tl.push({ at: d(hours - 20), title: "Refunded", detail: `${refunded.toFixed(2)} back to original method` });
-  return { id, createdAt: d(hours), locale: "en", status, customer: { name, email, phone: "+966 55 000 0000" }, address: { line1: "King Fahd Rd 18", city: "Riyadh", postal: "12211" }, shipping: "standard", payment, cardLast4: payment === "cod" ? undefined : "4421", items, ...t, refunded, timeline: tl };
+  return { id, createdAt: d(hours), locale: "en", status, customer: { name, email, phone: "+971 50 000 0000" }, address: { line1: "Sheikh Zayed Rd 18", city: "Dubai", postal: "Business Bay" }, shipping: "standard", payment, cardLast4: payment === "card" ? "4421" : undefined, items, ...t, refunded, timeline: tl };
 };
 
 export const seedOrders: Order[] = [
-  seedOrder(1042, 3, "Sara Al-Amin", "sara@nuzha.app", [seedItem("p1", "Sand", 1, "130 × 180"), seedItem("p5", "Off-white", 2)], "paid", "mada"),
+  seedOrder(1042, 3, "Sara Al-Amin", "sara@nuzha.app", [seedItem("p1", "Sand", 1, "130 × 180"), seedItem("p5", "Off-white", 2)], "paid", "tabby"),
   seedOrder(1041, 9, "Omar Haddad", "omar@example.com", [seedItem("p9", "Natural", 1, "40 × 30"), seedItem("p15", "Natural", 1)], "shipped", "card"),
   seedOrder(1040, 20, "Lina Farah", "lina@example.com", [seedItem("p5", "Ink", 1)], "paid", "applepay"),
-  seedOrder(1039, 30, "Yousef Nasser", "yousef@example.com", [seedItem("p3", "Natural", 1, "160 × 230")], "fulfilled", "mada"),
+  seedOrder(1039, 30, "Yousef Nasser", "yousef@example.com", [seedItem("p3", "Natural", 1, "160 × 230")], "fulfilled", "tabby"),
   seedOrder(1038, 44, "Noor Khalid", "noor@example.com", [seedItem("p1", "Olive", 1, "150 × 220")], "paid", "card"),
   seedOrder(1037, 52, "Ahmed Saleh", "ahmed@example.com", [seedItem("p10", "Natural", 1, "35 cm")], "cod", "cod"),
-  seedOrder(1036, 70, "Maya Rashid", "maya@example.com", [seedItem("p2", "Sand", 1, "45 × 45")], "refunded", "mada", 95),
+  seedOrder(1036, 70, "Maya Rashid", "maya@example.com", [seedItem("p2", "Sand", 1, "45 × 45")], "refunded", "tabby", 95),
   seedOrder(1035, 80, "Hassan Ali", "hassan@example.com", [seedItem("p14", "Off-white", 1)], "fulfilled", "applepay"),
 ];
 
@@ -84,7 +84,7 @@ interface State {
   resetAll: () => void;
 }
 
-const defaultSettings: Settings = { payments: { mada: true, card: true, applepay: true, cod: true, tabby: false }, locales: { ar: true }, freeShippingOver: FREE_SHIPPING_OVER, storeName: "Nuzha · Riyadh" };
+const defaultSettings: Settings = { payments: { tabby: true, card: true, applepay: true, cod: true }, locales: { ar: true }, freeShippingOver: FREE_SHIPPING_OVER, storeName: "Nuzha · Dubai" };
 
 export const useStore = create<State>()(
   persist(
@@ -107,7 +107,7 @@ export const useStore = create<State>()(
         const id = Math.max(1042, ...get().orders.map((x) => x.id)) + 1;
         const at = new Date().toISOString();
         const timeline: TimelineEvent[] = [{ at, title: "Order placed", detail: `web (${o.locale.toUpperCase()})` }];
-        if (o.payment !== "cod") timeline.push({ at, title: "Payment captured", detail: o.payment === "mada" ? "Mada" : o.payment === "card" ? `Card •••• ${o.cardLast4}` : "Apple Pay" });
+        if (o.payment !== "cod") timeline.push({ at, title: "Payment captured", detail: o.payment === "tabby" ? "Tabby" : o.payment === "card" ? `Card •••• ${o.cardLast4}` : "Apple Pay" });
         timeline.push({ at, title: "Confirmation sent", detail: "email + SMS" });
         const order: Order = { ...o, id, createdAt: at, status: o.payment === "cod" ? "cod" : "paid", refunded: 0, timeline };
         const overrides = { ...get().overrides };
@@ -115,7 +115,7 @@ export const useStore = create<State>()(
         set((s) => ({ orders: [order, ...s.orders], cart: [], discountCode: "", cartOpen: false, overrides }));
         return order;
       },
-      fulfil: (id) => set((s) => ({ orders: s.orders.map((o) => (o.id === id ? { ...o, status: "fulfilled", timeline: [...o.timeline, { at: new Date().toISOString(), title: "Packed", detail: "Riyadh warehouse" }] } : o)) })),
+      fulfil: (id) => set((s) => ({ orders: s.orders.map((o) => (o.id === id ? { ...o, status: "fulfilled", timeline: [...o.timeline, { at: new Date().toISOString(), title: "Packed", detail: "Dubai warehouse" }] } : o)) })),
       ship: (id) => set((s) => ({ orders: s.orders.map((o) => (o.id === id ? { ...o, status: "shipped", timeline: [...o.timeline, { at: new Date().toISOString(), title: "Shipped", detail: "Aramex · label created" }] } : o)) })),
       refund: (id, amount, reason, restock) => set((s) => {
         const overrides = { ...s.overrides };
@@ -136,7 +136,7 @@ export const useStore = create<State>()(
       resetAll: () => set({ cart: [], cartOpen: false, discountCode: "", orders: seedOrders, theme: "arcade-light", settings: defaultSettings, overrides: {} }),
     }),
     {
-      name: "nuzha-store-v1",
+      name: "nuzha-store-v2",
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ cart: s.cart, discountCode: s.discountCode, orders: s.orders, theme: s.theme, settings: s.settings, overrides: s.overrides }),
       onRehydrateStorage: () => (state) => { state?.markHydrated(); },

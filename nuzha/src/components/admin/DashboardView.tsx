@@ -25,7 +25,7 @@ export function DashboardView({ locale }: { locale: Locale }) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-sm text-ink-2">{dateFmt(new Date().toISOString())} · Riyadh store · last 14 days</div>
+        <div className="text-sm text-ink-2">{dateFmt(new Date().toISOString())} · Dubai store · last 14 days</div>
         <div className="flex gap-2"><Button variant="secondary" size="sm">Export</Button><Button size="sm" href={`/${locale}`}>View storefront</Button></div>
       </div>
       <div className="grid gap-4 md:grid-cols-4">
@@ -34,7 +34,7 @@ export function DashboardView({ locale }: { locale: Locale }) {
         ))}
       </div>
       <div className="grid gap-4 md:grid-cols-[1fr_360px]">
-        <Panel title="Sales by day" action={<span className="text-xs text-ink-2">SAR · gross</span>}>
+        <Panel title="Sales by day" action={<span className="text-xs text-ink-2">AED · gross</span>}>
           <div className="flex h-44 items-end gap-2">{bars.map((v, i) => <div key={i} title={num(v)} className={`flex-1 rounded-sm ${i === 13 ? "bg-accent" : "bg-secondary"}`} style={{ height: `${Math.max(6, (v / max) * 100)}%` }} />)}</div>
           <div className="flex justify-between text-xs text-ink-2">{[0, 4, 9, 13].map((i) => <span key={i}>{dateFmt(days[i].toISOString())}</span>)}</div>
         </Panel>

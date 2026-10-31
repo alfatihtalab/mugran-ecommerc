@@ -32,7 +32,7 @@ export function ThemesView() {
       <div className="flex flex-wrap items-center justify-between gap-3"><p className="max-w-xl text-sm text-ink-2">Each store runs one published theme. Presets are starting points; the storefront switches immediately when you pick one here.</p><div className="flex gap-2"><Button variant="secondary" size="sm" href="/en">Preview store</Button><Button size="sm">Publish changes</Button></div></div>
       <div className="grid gap-4 md:grid-cols-[1fr_380px]">
         <div className="flex flex-col gap-4">
-          <Panel title={<span className="flex items-center gap-3">{cur.name} <Badge tone="secondary">Published</Badge></span>} action={<span className="text-xs text-ink-2">v3 · live on riyadh.nuzha.app</span>}><Preview pal={cur.pal} h={220} /></Panel>
+          <Panel title={<span className="flex items-center gap-3">{cur.name} <Badge tone="secondary">Published</Badge></span>} action={<span className="text-xs text-ink-2">v3 · live on dubai.nuzha.app</span>}><Preview pal={cur.pal} h={220} /></Panel>
           <Panel title="Presets">
             <div className="grid gap-3 md:grid-cols-4">{presets.map((p) => (
               <button key={p.id} onClick={() => setTheme(p.id)} className={`flex flex-col gap-2 rounded-sm border p-3 text-start ${p.id === theme ? "border-[1.5px] border-accent bg-accent-subtle" : "border-line bg-page"}`}>

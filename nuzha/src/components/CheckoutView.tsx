@@ -23,11 +23,11 @@ export function CheckoutView({ locale }: { locale: Locale }) {
   const { pct } = useCartTotals();
 
   const [step, setStep] = useState(1);
-  const [f, setF] = useState({ email: "", phone: "", name: "", line1: "", city: "Riyadh", postal: "" });
+  const [f, setF] = useState({ email: "", phone: "", name: "", line1: "", city: "Dubai", postal: "Jumeirah" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [shipping, setShipping] = useState<ShippingMethod>("standard");
-  const enabledPay = (["mada", "card", "applepay", "cod"] as PaymentMethod[]).filter((m) => settings.payments[m]);
-  const [payment, setPayment] = useState<PaymentMethod>(enabledPay[0] ?? "mada");
+  const enabledPay = (["card", "applepay", "tabby", "cod"] as PaymentMethod[]).filter((m) => settings.payments[m]);
+  const [payment, setPayment] = useState<PaymentMethod>(enabledPay[0] ?? "tabby");
   const [card, setCard] = useState({ number: "4421 0000 0000 8830", expiry: "09 / 28", cvc: "123" });
   const [terms, setTerms] = useState(true);
   const [code, setCode] = useState(discountCode);
@@ -51,7 +51,7 @@ export function CheckoutView({ locale }: { locale: Locale }) {
     setTimeout(() => {
       const order = placeOrder({
         locale, customer: { name: f.name, email: f.email, phone: f.phone }, address: { line1: f.line1, city: f.city, postal: f.postal }, shipping, payment,
-        cardLast4: payment === "card" || payment === "mada" ? card.number.replace(/\s/g, "").slice(-4) : undefined,
+        cardLast4: payment === "card" ? card.number.replace(/\s/g, "").slice(-4) : undefined,
         items: lines.map(({ line, p, price }) => ({ productId: p.id, name: p.name.en, colour: line.colour, size: line.size, qty: line.qty, price, image: p.images[0] })),
         ...totals,
       });
@@ -83,7 +83,7 @@ export function CheckoutView({ locale }: { locale: Locale }) {
             <div className="flex flex-col gap-4 rounded-md border border-line bg-surface p-6">
               <h2 className="font-display text-2xl text-ink">{d.checkout.contact}</h2>
               <Input label={d.checkout.email} type="email" value={f.email} onChange={set("email")} placeholder="name@example.com" helper={d.checkout.emailHelp} error={errors.email} autoFocus />
-              <Input label={d.checkout.phone} type="tel" value={f.phone} onChange={set("phone")} placeholder="+966 5x xxx xxxx" helper={d.checkout.phoneHelp} error={errors.phone} />
+              <Input label={d.checkout.phone} type="tel" value={f.phone} onChange={set("phone")} placeholder="+971 5x xxx xxxx" helper={d.checkout.phoneHelp} error={errors.phone} />
               <div className="flex justify-end pt-2"><Button onClick={() => validate1() && setStep(2)}>{d.checkout.continueShipping}</Button></div>
             </div>
           )}
@@ -121,7 +121,7 @@ export function CheckoutView({ locale }: { locale: Locale }) {
                       <Radio on={payment === m} />
                       <div className="flex-1"><div className="text-sm font-medium text-ink">{d.checkout.pay[m][0]}</div><div className="text-sm text-ink-2">{d.checkout.pay[m][1]}</div></div>
                     </button>
-                    {payment === m && (m === "card" || m === "mada") && (
+                    {payment === m && m === "card" && (
                       <div className="mt-3 flex flex-col gap-4 px-2">
                         <Input label={d.checkout.cardNumber} value={card.number} onChange={(e) => setCard({ ...card, number: e.target.value })} inputMode="numeric" className="num" />
                         <div className="grid grid-cols-2 gap-4">

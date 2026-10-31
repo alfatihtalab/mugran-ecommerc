@@ -19,7 +19,7 @@ export function AdminShell({ locale, children }: { locale: Locale; children: Rea
     <div className="flex min-h-screen bg-page" dir="ltr" style={{ fontFamily: "var(--font-figtree)" }}>
       <aside className={`fixed inset-y-0 start-0 z-40 flex w-60 flex-col justify-between border-e border-line bg-surface px-4 py-6 transition-transform md:static md:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex flex-col gap-8">
-          <div className="px-2"><div className="font-display text-2xl text-ink" style={{ fontFamily: "var(--font-fraunces)" }}>Nuzha</div><div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-2">Admin · {storeName.split("·")[1]?.trim() || "Riyadh store"}</div></div>
+          <div className="px-2"><div className="font-display text-2xl text-ink" style={{ fontFamily: "var(--font-fraunces)" }}>Nuzha</div><div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-2">Admin · {storeName.split("·")[1]?.trim() || "Dubai store"}</div></div>
           <nav className="flex flex-col gap-0.5">
             {items.map(([l, p]) => { const active = p === "" ? rest === "" : rest.startsWith(p); return (
               <Link key={l} href={base + p} onClick={() => setOpen(false)} className={`flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium ${active ? "bg-accent-subtle text-accent" : "text-ink hover:bg-muted"}`}>
@@ -29,7 +29,7 @@ export function AdminShell({ locale, children }: { locale: Locale; children: Rea
           </nav>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="rounded-sm border border-line bg-raised p-3"><div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-2">Deployment</div><div className="mt-1 text-xs font-medium text-ink">Isolated · riyadh.nuzha.app</div><div className="text-xs text-ink-2">Own database · own domain</div></div>
+          <div className="rounded-sm border border-line bg-raised p-3"><div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-2">Deployment</div><div className="mt-1 text-xs font-medium text-ink">Isolated · dubai.nuzha.app</div><div className="text-xs text-ink-2">Own database · own domain</div></div>
           <Link href={`/${locale}`} className="px-2 text-xs text-ink-2 hover:text-ink">← Back to storefront</Link>
           <div className="flex items-center gap-3 px-2 py-2"><span className="h-7 w-7 rounded-full bg-secondary" /><div><div className="text-xs font-medium text-ink">Alfatih T.</div><div className="text-xs text-ink-2">Owner</div></div></div>
         </div>

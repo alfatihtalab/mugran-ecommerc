@@ -21,7 +21,7 @@ export function CustomersView() {
 export function DiscountsView() {
   return (
     <Panel title="Discounts" action={<Button size="sm">Create discount</Button>}>
-      {[["NUZHA10", "10% off the whole order · no minimum", "Active", "secondary"], ["WELCOME50", "50 SAR off first order over 300", "Scheduled · 15 Nov", "highlight"], ["RAMADAN20", "20% off textiles", "Expired", "neutral"]].map(([c, d, s, t]) => (
+      {[["NUZHA10", "10% off the whole order · no minimum", "Active", "secondary"], ["WELCOME50", "50 AED off first order over 300", "Scheduled · 15 Nov", "highlight"], ["RAMADAN20", "20% off textiles", "Expired", "neutral"]].map(([c, d, s, t]) => (
         <div key={c} className="flex items-center gap-4 border-b border-line py-3 last:border-0"><div className="flex-1"><div className="num text-sm font-medium text-ink">{c}</div><div className="text-sm text-ink-2">{d}</div></div><Badge tone={t as "secondary" | "highlight" | "neutral"}>{s}</Badge></div>
       ))}
       <p className="text-sm text-ink-2">Try NUZHA10 at checkout.</p>

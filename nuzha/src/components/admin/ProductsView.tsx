@@ -30,7 +30,7 @@ export function ProductsView({ locale }: { locale: Locale }) {
             <tr key={p.id} className="border-t border-line">
               <td className="px-4 py-3"><Link href={`/${locale}/admin/products/${p.id}`} className="flex items-center gap-3"><div className="h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-highlight-subtle"><SmartImage src={p.images[0]} alt="" seed={p.slug} /></div><div><div className="font-medium text-ink">{p.name.en}</div><div className="text-xs text-ink-2">{categoryBySlug(p.category)?.name.en} · {p.colours.length} colours{p.sizes ? ` · ${p.sizes.length} sizes` : ""}</div></div></Link></td>
               <td className="px-4 py-3 text-ink-2">{p.sku}</td>
-              <td className={`num px-4 py-3 ${p.stock === 0 ? "text-ink-2" : p.stock <= 3 ? "text-error" : "text-ink"}`}>{p.stock} Riyadh{p.stock === 0 ? " · sold out" : p.stock <= 3 ? " · low" : ""}</td>
+              <td className={`num px-4 py-3 ${p.stock === 0 ? "text-ink-2" : p.stock <= 3 ? "text-error" : "text-ink"}`}>{p.stock} Dubai{p.stock === 0 ? " · sold out" : p.stock <= 3 ? " · low" : ""}</td>
               <td className="num px-4 py-3 text-end">{num(p.price)}</td>
               <td className="px-4 py-3"><Badge tone={p.status === "active" ? "secondary" : "neutral"}>{p.status === "active" ? "Active" : "Draft"}</Badge></td>
             </tr>))}</tbody></table>

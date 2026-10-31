@@ -14,8 +14,8 @@ export function ConfirmationView({ locale, id }: { locale: Locale; id: number })
   if (!hydrated) return <div className="min-h-[60vh]" />;
   if (!order) return <div className="mx-auto max-w-[640px] px-5 py-20 text-center text-ink-2">{d.confirmation.notFound}</div>;
   const first = order.customer.name.split(" ")[0];
-  const payLabel = order.payment === "cod" ? d.status.cod : `${d.confirmation.paid} · ${order.payment === "applepay" ? "Apple Pay" : order.payment === "mada" ? "Mada" : "Card"}${order.cardLast4 ? ` •••• ${order.cardLast4}` : ""}`;
-  const arrive = new Date(order.createdAt); arrive.setDate(arrive.getDate() + (order.shipping === "express" ? 1 : 3));
+  const payLabel = order.payment === "cod" ? d.status.cod : `${d.confirmation.paid} · ${order.payment === "applepay" ? "Apple Pay" : order.payment === "tabby" ? "Tabby" : "Card"}${order.cardLast4 ? ` •••• ${order.cardLast4}` : ""}`;
+  const arrive = new Date(order.createdAt); arrive.setDate(arrive.getDate() + (order.shipping === "express" ? 0 : 2));
   return (
     <div className="mx-auto flex max-w-[640px] flex-col items-center gap-8 px-5 py-16 md:py-20">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success text-2xl text-on-accent">✓</div>
@@ -41,7 +41,7 @@ export function ConfirmationView({ locale, id }: { locale: Locale; id: number })
         <div className="flex items-baseline justify-between border-t border-line pt-3"><span className="text-sm font-medium">{d.confirmation.totalPaid}</span><span className="num font-display text-2xl">{money(order.total, locale)}</span></div>
       </div>
       <div className="grid w-full gap-4 md:grid-cols-2">
-        <div className="rounded-md border border-line bg-surface p-6"><div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-2">{d.confirmation.deliveringTo}</div><div className="mt-2 text-sm text-ink">{order.customer.name}<br />{order.address.line1}<br />{order.address.city} <span className="num">{order.address.postal}</span></div></div>
+        <div className="rounded-md border border-line bg-surface p-6"><div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-2">{d.confirmation.deliveringTo}</div><div className="mt-2 text-sm text-ink">{order.customer.name}<br />{order.address.line1}<br />{order.address.postal}, {order.address.city}</div></div>
         <div className="rounded-md border border-line bg-surface p-6"><div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-2">{d.confirmation.arrival}</div><div className="mt-2 text-sm text-ink">{new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-nu-latn-ca-gregory" : "en-GB", { weekday: "short", day: "numeric", month: "short" }).format(arrive)}<br /><span className="text-ink-2">{d.checkout.methods[["standard", "express", "pickup"].indexOf(order.shipping)][0]}</span></div></div>
       </div>
       <div className="flex w-full flex-col gap-4">

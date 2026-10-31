@@ -1,6 +1,6 @@
 # Nuzha · نزهة — storefront + admin (frontend only)
 
-Next.js 16 · React 19 · Tailwind v4 · zustand. No backend: cart, orders, stock, theme and settings live in your browser's localStorage, so you can place orders like a customer and then handle them in the admin.
+Next.js 16 · React 19 · Tailwind v4 · zustand. UAE store (AED, 5% VAT, Dubai). No backend: cart, orders, stock, theme and settings live in your browser's localStorage, so you can place orders like a customer and then handle them in the admin.
 
 ## Run
 
@@ -14,7 +14,7 @@ Open http://localhost:3000 — it redirects to `/en`. Arabic (RTL) is at `/ar`; 
 ## Try the full loop
 
 1. Pick a product, choose colour/size, **Add to cart**, open the drawer, **Checkout**.
-2. Step 1 contact → Step 2 address + shipping method → Step 3 payment (Mada, card, Apple Pay, cash on delivery). Discount code `NUZHA10` gives 10%.
+2. Step 1 contact → Step 2 address + shipping method → Step 3 payment (card, Apple Pay, Tabby, cash on delivery). Discount code `NUZHA10` gives 10%.
 3. **Pay** → confirmation page `/en/orders/<id>`. Your orders also appear at `/en/account`.
 4. Open `/en/admin` (link in the footer): the order is in **Orders**; open it to **Fulfil**, **Mark as shipped**, or **Refund** (partial or full, optional restock).
 5. **Products** → edit price, stock, title (EN/AR) or set to Draft; the storefront reflects it immediately.
