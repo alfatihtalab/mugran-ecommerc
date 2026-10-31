@@ -12,6 +12,8 @@ const colourNames = ["Sand", "Olive", "Terracotta", "Ink", "Off-white", "Natural
 export function CollectionView({ locale, slug }: { locale: Locale; slug: string }) {
   const d = t(locale);
   const overrides = useStore((s) => s.overrides);
+  const custom = useStore((s) => s.customProducts);
+  const deleted = useStore((s) => s.deleted);
   const cat = categoryBySlug(slug);
   const [sort, setSort] = useState<"newest" | "low" | "high">("newest");
   const [colours, setColours] = useState<string[]>([]);
@@ -19,7 +21,7 @@ export function CollectionView({ locale, slug }: { locale: Locale; slug: string 
   const [price, setPrice] = useState<[number, number] | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  const all = useMemo(() => effectiveProducts(overrides).filter((p) => p.status === "active"), [overrides]);
+  const all = useMemo(() => effectiveProducts(overrides, custom, deleted).filter((p) => p.status === "active"), [overrides, custom, deleted]);
   const base = slug === "all" ? all : slug === "sale" ? all.filter((p) => p.compareAt || p.badge === "limited") : all.filter((p) => p.category === slug);
   const list = base
     .filter((p) => colours.length === 0 || p.colours.some((c) => colours.includes(c.name.en)))

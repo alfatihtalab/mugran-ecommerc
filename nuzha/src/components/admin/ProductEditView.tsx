@@ -6,12 +6,15 @@ import { SmartImage } from "@/components/SmartImage";
 import { Badge, Button, Chip, Input } from "@/components/ui";
 import { categoryBySlug } from "@/lib/catalog";
 import type { Locale } from "@/lib/i18n";
-import { useProduct, useStore } from "@/lib/store";
+import { isCustom, useProduct, useStore } from "@/lib/store";
+import { useRouter } from "next/navigation";
 
 export function ProductEditView({ locale, id }: { locale: Locale; id: string }) {
   const p = useProduct(id);
   const hydrated = useStore((s) => s.hydrated);
   const setOverride = useStore((s) => s.setOverride);
+  const deleteProduct = useStore((s) => s.deleteProduct);
+  const router = useRouter();
   const [f, setF] = useState<{ nameEn: string; nameAr: string; price: string; stock: string; status: "active" | "draft" } | null>(null);
   const [saved, setSaved] = useState(false);
   if (!hydrated) return null;
@@ -24,7 +27,7 @@ export function ProductEditView({ locale, id }: { locale: Locale; id: string }) 
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3"><Link href={`/${locale}/admin/products`} className="text-sm text-ink-2">Products /</Link><h2 className="font-display text-3xl text-ink" style={{ fontFamily: "var(--font-fraunces)" }}>{p.name.en}</h2><Badge tone={p.status === "active" ? "secondary" : "neutral"}>{p.status === "active" ? "Active" : "Draft"}</Badge>{dirty && <span className="text-xs font-medium text-accent">Unsaved changes</span>}{saved && <span className="text-xs font-medium text-success">Saved</span>}</div>
-        <div className="flex gap-2"><Button variant="ghost" size="sm" onClick={() => setF(null)} disabled={!dirty}>Discard</Button><Button variant="secondary" size="sm" href={`/${locale}/products/${p.slug}`}>Preview</Button><Button size="sm" onClick={save} disabled={!dirty}>Save</Button></div>
+        <div className="flex gap-2"><Button variant="ghost" size="sm" onClick={() => { if (confirm(`Remove “${p.name.en}” from the storefront?`)) { deleteProduct(p.id); router.push(`/${locale}/admin/products`); } }}>Delete</Button><Button variant="ghost" size="sm" onClick={() => setF(null)} disabled={!dirty}>Discard</Button><Button variant="secondary" size="sm" href={isCustom(p.id) ? `/${locale}/products/custom/?id=${p.id}` : `/${locale}/products/${p.slug}`}>Preview</Button><Button size="sm" onClick={save} disabled={!dirty}>Save</Button></div>
       </div>
       <div className="grid gap-4 md:grid-cols-[1fr_340px]">
         <div className="flex flex-col gap-4">

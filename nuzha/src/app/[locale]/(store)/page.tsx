@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { ProductCard } from "@/components/ProductCard";
 import { SmartImage } from "@/components/SmartImage";
 import { Badge, Button } from "@/components/ui";
 import { Reveal } from "@/components/Reveal";
-import { categories, editorialImage, heroImage, newest } from "@/lib/catalog";
+import { categories, editorialImage, heroImage } from "@/lib/catalog";
+import { NewArrivals } from "@/components/NewArrivals";
 import { isLocale, t, type Locale } from "@/lib/i18n";
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
@@ -48,9 +48,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           <h2 className="font-display text-3xl text-ink">{d.home.newArrivals}</h2>
           <Link href={`/${locale}/collections/all`} className="text-sm font-medium text-accent">{d.home.viewAll} →</Link>
         </Reveal>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-          {newest(4).map((p, i) => <ProductCard key={p.id} id={p.id} locale={locale} index={i} />)}
-        </div>
+        <NewArrivals locale={locale} />
       </section>
 
       {/* Editorial band */}

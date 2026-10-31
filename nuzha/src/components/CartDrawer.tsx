@@ -5,8 +5,8 @@ import { SmartImage } from "./SmartImage";
 import { Button } from "./ui";
 import { money } from "@/lib/format";
 import { fill, t, type Locale } from "@/lib/i18n";
-import { computeTotals, useProduct, useStore, type CartLine, type ProductOverride } from "@/lib/store";
-import { byId } from "@/lib/catalog";
+import { computeTotals, findProduct, useProduct, useStore, type CartLine, type ProductOverride } from "@/lib/store";
+import type { Product } from "@/lib/catalog";
 
 export function CartLineRow({ line, locale, compact = false }: { line: CartLine; locale: Locale; compact?: boolean }) {
   const p = useProduct(line.productId);
@@ -42,11 +42,12 @@ export function useCartTotals() {
   const overrides = useStore((s) => s.overrides);
   const discountCode = useStore((s) => s.discountCode);
   const freeOver = useStore((s) => s.settings.freeShippingOver);
-  const lines = cart.map((l) => { const p = withOverride(l.productId, overrides); return { price: p?.price ?? 0, qty: l.qty }; });
+  const custom = useStore((s) => s.customProducts);
+  const lines = cart.map((l) => { const p = withOverride(l.productId, overrides, custom); return { price: p?.price ?? 0, qty: l.qty }; });
   const pct = discountCode.toUpperCase() === "NUZHA10" ? 0.1 : 0;
   return { totals: computeTotals(lines, "standard", null, pct, freeOver), pct, count: cart.reduce((n, l) => n + l.qty, 0), freeOver };
 }
-function withOverride(id: string, overrides: Record<string, ProductOverride>) { const p = byId(id); if (!p) return undefined; return { ...p, price: overrides[id]?.price ?? p.price }; }
+function withOverride(id: string, overrides: Record<string, ProductOverride>, custom: Product[]) { const p = findProduct({ customProducts: custom }, id); if (!p) return undefined; return { ...p, price: overrides[id]?.price ?? p.price }; }
 
 export function CartDrawer({ locale }: { locale: Locale }) {
   const open = useStore((s) => s.cartOpen);

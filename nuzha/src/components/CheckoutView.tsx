@@ -5,10 +5,9 @@ import { Row, useCartTotals } from "./CartDrawer";
 import { SmartImage } from "./SmartImage";
 import { Stepper } from "./Stepper";
 import { Button, Checkbox, Input, Radio } from "./ui";
-import { byId } from "@/lib/catalog";
 import { money } from "@/lib/format";
 import { t, type Locale } from "@/lib/i18n";
-import { computeTotals, useStore, type PaymentMethod, type ShippingMethod } from "@/lib/store";
+import { computeTotals, findProduct, useStore, type PaymentMethod, type ShippingMethod } from "@/lib/store";
 
 export function CheckoutView({ locale }: { locale: Locale }) {
   const d = t(locale);
@@ -16,6 +15,7 @@ export function CheckoutView({ locale }: { locale: Locale }) {
   const cart = useStore((s) => s.cart);
   const hydrated = useStore((s) => s.hydrated);
   const overrides = useStore((s) => s.overrides);
+  const custom = useStore((s) => s.customProducts);
   const settings = useStore((s) => s.settings);
   const discountCode = useStore((s) => s.discountCode);
   const setDiscount = useStore((s) => s.setDiscount);
@@ -35,7 +35,7 @@ export function CheckoutView({ locale }: { locale: Locale }) {
   const [busy, setBusy] = useState(false);
 
   if (!hydrated) return <div className="min-h-[60vh]" />;
-  const lines = cart.map((l) => { const p = byId(l.productId)!; return { line: l, p, price: overrides[p.id]?.price ?? p.price }; });
+  const lines = cart.flatMap((l) => { const p = findProduct({ customProducts: custom }, l.productId); return p ? [{ line: l, p, price: overrides[p.id]?.price ?? p.price }] : []; });
   if (lines.length === 0) return (
     <div className="mx-auto flex max-w-[1100px] flex-col items-start gap-4 px-5 py-20 md:px-16"><p className="text-ink-2">{d.cart.empty}</p><Button href={`/${locale}/collections/all`}>{d.cart.continue}</Button></div>
   );

@@ -1,7 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { byId, products } from "./catalog";
+import { byId, products, type Product } from "./catalog";
 import { COD_FEE, FREE_SHIPPING_OVER, SHIPPING, VAT } from "./format";
 
 export type ThemeId = "arcade-light" | "arcade-dark" | "harbour" | "stroll";
@@ -70,6 +70,9 @@ export const seedOrders: Order[] = [
 
 interface State {
   hydrated: boolean; markHydrated: () => void;
+  customProducts: Product[]; deleted: string[];
+  addProduct: (p: Omit<Product, "id" | "createdAt">) => Product;
+  deleteProduct: (id: string) => void; restoreProduct: (id: string) => void;
   cart: CartLine[]; cartOpen: boolean; discountCode: string;
   orders: Order[]; theme: ThemeId; settings: Settings; overrides: Record<string, ProductOverride>;
   addToCart: (productId: string, colour: string, size: string | undefined, qty: number) => void;
@@ -90,6 +93,10 @@ export const useStore = create<State>()(
   persist(
     (set, get) => ({
       hydrated: false, markHydrated: () => set({ hydrated: true }),
+      customProducts: [], deleted: [],
+      addProduct: (p) => { const id = `c${Date.now().toString(36)}`; const product: Product = { ...p, id, createdAt: new Date().toISOString().slice(0, 10) }; set((s) => ({ customProducts: [product, ...s.customProducts] })); return product; },
+      deleteProduct: (id) => set((s) => ({ deleted: s.deleted.includes(id) ? s.deleted : [...s.deleted, id], cart: s.cart.filter((l) => l.productId !== id) })),
+      restoreProduct: (id) => set((s) => ({ deleted: s.deleted.filter((x) => x !== id) })),
       cart: [], cartOpen: false, discountCode: "",
       orders: seedOrders, theme: "arcade-light", settings: defaultSettings, overrides: {},
       addToCart: (productId, colour, size, qty) => set((s) => {
@@ -111,7 +118,7 @@ export const useStore = create<State>()(
         timeline.push({ at, title: "Confirmation sent", detail: "email + SMS" });
         const order: Order = { ...o, id, createdAt: at, status: o.payment === "cod" ? "cod" : "paid", refunded: 0, timeline };
         const overrides = { ...get().overrides };
-        for (const it of o.items) { const cur = overrides[it.productId]?.stock ?? byId(it.productId)?.stock ?? 0; overrides[it.productId] = { ...overrides[it.productId], stock: Math.max(0, cur - it.qty) }; }
+        for (const it of o.items) { const cur = overrides[it.productId]?.stock ?? findProduct(get(), it.productId)?.stock ?? 0; overrides[it.productId] = { ...overrides[it.productId], stock: Math.max(0, cur - it.qty) }; }
         set((s) => ({ orders: [order, ...s.orders], cart: [], discountCode: "", cartOpen: false, overrides }));
         return order;
       },
@@ -122,7 +129,7 @@ export const useStore = create<State>()(
         const orders = s.orders.map((o) => {
           if (o.id !== id) return o;
           const refunded = Math.min(o.total, o.refunded + amount);
-          if (restock) for (const it of o.items) { const cur = overrides[it.productId]?.stock ?? byId(it.productId)?.stock ?? 0; overrides[it.productId] = { ...overrides[it.productId], stock: cur + it.qty }; }
+          if (restock) for (const it of o.items) { const cur = overrides[it.productId]?.stock ?? findProduct(s, it.productId)?.stock ?? 0; overrides[it.productId] = { ...overrides[it.productId], stock: cur + it.qty }; }
           const status: OrderStatus = refunded >= o.total - 0.005 ? "refunded" : "partially_refunded";
           return { ...o, refunded, status, timeline: [...o.timeline, { at: new Date().toISOString(), title: status === "refunded" ? "Refunded" : "Partial refund", detail: `${amount.toFixed(2)} · ${reason}${restock ? " · restocked" : ""}` }] };
         });
@@ -133,23 +140,32 @@ export const useStore = create<State>()(
       setSettings: (p) => set((s) => ({ settings: { ...s.settings, ...p } })),
       setPayment: (m, on) => set((s) => ({ settings: { ...s.settings, payments: { ...s.settings.payments, [m]: on } } })),
       setOverride: (id, o) => set((s) => ({ overrides: { ...s.overrides, [id]: { ...s.overrides[id], ...o } } })),
-      resetAll: () => set({ cart: [], cartOpen: false, discountCode: "", orders: seedOrders, theme: "arcade-light", settings: defaultSettings, overrides: {} }),
+      resetAll: () => set({ cart: [], cartOpen: false, discountCode: "", orders: seedOrders, theme: "arcade-light", settings: defaultSettings, overrides: {}, customProducts: [], deleted: [] }),
     }),
     {
       name: "nuzha-store-v2",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ cart: s.cart, discountCode: s.discountCode, orders: s.orders, theme: s.theme, settings: s.settings, overrides: s.overrides }),
+      partialize: (s) => ({ cart: s.cart, discountCode: s.discountCode, orders: s.orders, theme: s.theme, settings: s.settings, overrides: s.overrides, customProducts: s.customProducts, deleted: s.deleted }),
       onRehydrateStorage: () => (state) => { state?.markHydrated(); },
     }
   )
 );
 
-/** Effective product data: catalogue + admin overrides. */
-export const useProduct = (id: string) => {
+/** Catalogue product or admin-added product, by id (ignores deletion). */
+export const findProduct = (s: { customProducts: Product[] }, id: string): Product | undefined => byId(id) ?? s.customProducts.find((p) => p.id === id);
+export const isCustom = (id: string) => id.startsWith("c");
+const apply = (p: Product, o?: ProductOverride) => ({ ...p, price: o?.price ?? p.price, stock: o?.stock ?? p.stock, name: { en: o?.nameEn ?? p.name.en, ar: o?.nameAr ?? p.name.ar }, status: o?.status ?? ("active" as const) });
+export type EffectiveProduct = ReturnType<typeof apply>;
+/** Effective product data: catalogue + admin-added, minus deleted, with admin overrides. Deleted products return undefined. */
+export const useProduct = (id: string): EffectiveProduct | undefined => {
   const o = useStore((s) => s.overrides[id]);
-  const p = byId(id);
-  if (!p) return undefined;
-  return { ...p, price: o?.price ?? p.price, stock: o?.stock ?? p.stock, name: { en: o?.nameEn ?? p.name.en, ar: o?.nameAr ?? p.name.ar }, status: o?.status ?? "active" };
+  const custom = useStore((s) => s.customProducts);
+  const gone = useStore((s) => s.deleted.includes(id));
+  const p = findProduct({ customProducts: custom }, id);
+  if (!p || gone) return undefined;
+  return apply(p, o);
 };
-export const effectiveProducts = (overrides: Record<string, ProductOverride>) =>
-  products.map((p) => { const o = overrides[p.id]; return { ...p, price: o?.price ?? p.price, stock: o?.stock ?? p.stock, name: { en: o?.nameEn ?? p.name.en, ar: o?.nameAr ?? p.name.ar }, status: o?.status ?? "active" as const }; });
+/** Same lookup for places that must still show deleted products (order history). */
+export const useProductRecord = (id: string): Product | undefined => useStore((s) => findProduct(s, id));
+export const effectiveProducts = (overrides: Record<string, ProductOverride>, custom: Product[] = [], deleted: string[] = [], includeDeleted = false) =>
+  [...custom, ...products].filter((p) => includeDeleted || !deleted.includes(p.id)).map((p) => ({ ...apply(p, overrides[p.id]), deleted: deleted.includes(p.id) }));

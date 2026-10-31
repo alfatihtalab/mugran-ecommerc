@@ -4,7 +4,7 @@ import { SmartImage } from "./SmartImage";
 import { Badge } from "./ui";
 import { money } from "@/lib/format";
 import { t, type Locale } from "@/lib/i18n";
-import { useProduct } from "@/lib/store";
+import { isCustom, useProduct } from "@/lib/store";
 import { Reveal } from "./Reveal";
 
 export function ProductCard({ id, locale, index = 0 }: { id: string; locale: Locale; index?: number }) {
@@ -13,7 +13,7 @@ export function ProductCard({ id, locale, index = 0 }: { id: string; locale: Loc
   if (!p) return null;
   const sold = p.stock <= 0;
   return (
-    <Reveal delay={Math.min(index, 7) * 70}><Link href={`/${locale}/products/${p.slug}`} className="group lift flex flex-col gap-3">
+    <Reveal delay={Math.min(index, 7) * 70}><Link href={isCustom(p.id) ? `/${locale}/products/custom/?id=${p.id}` : `/${locale}/products/${p.slug}`} className="group lift flex flex-col gap-3">
       <div className={`relative aspect-square overflow-hidden rounded-md bg-highlight-subtle ${sold ? "opacity-70" : ""}`}>
         <SmartImage src={p.images[0]} alt={p.name[locale]} seed={p.slug} className="transition-transform duration-500 group-hover:scale-[1.03]" />
         <div className="absolute start-3 top-3">

@@ -5,6 +5,8 @@ import { ProductCard } from "./ProductCard";
 import { SmartImage } from "./SmartImage";
 import { Badge, Button } from "./ui";
 import { categoryBySlug, related } from "@/lib/catalog";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { money } from "@/lib/format";
 import { t, type Locale } from "@/lib/i18n";
 import { useProduct, useStore } from "@/lib/store";
@@ -19,7 +21,10 @@ export function ProductView({ locale, id }: { locale: Locale; id: string }) {
   const [qty, setQty] = useState(1);
   const [open, setOpen] = useState<number | null>(0);
   const [added, setAdded] = useState(false);
-  if (!p) return null;
+  const hydrated = useStore((s) => s.hydrated);
+  const router = useRouter();
+  useEffect(() => { if (hydrated && !p) router.replace(`/${locale}/collections/all`); }, [hydrated, p, router, locale]);
+  if (!p) return <div className="min-h-[50vh]" />;
   const sold = p.stock <= 0;
   const cat = categoryBySlug(p.category)!;
   const add = () => { addToCart(p.id, p.colours[colour].name.en, p.sizes?.[size], qty); setAdded(true); setTimeout(() => setAdded(false), 1500); };
@@ -31,7 +36,7 @@ export function ProductView({ locale, id }: { locale: Locale; id: string }) {
         <div className="flex flex-col gap-3">
           <div className="aspect-square overflow-hidden rounded-md bg-highlight-subtle"><SmartImage key={img} src={p.images[img]} alt={p.name[locale]} seed={p.slug + img} className="animate-fade" /></div>
           <div className="grid grid-cols-4 gap-3">
-            {p.images.map((src, i) => <button key={src} onClick={() => setImg(i)} className={`aspect-square overflow-hidden rounded-md bg-highlight-subtle ${i === img ? "ring-2 ring-line-strong" : ""}`}><SmartImage src={src} alt="" seed={p.slug + i} /></button>)}
+            {p.images.map((src, i) => <button key={i} onClick={() => setImg(i)} className={`aspect-square overflow-hidden rounded-md bg-highlight-subtle ${i === img ? "ring-2 ring-line-strong" : ""}`}><SmartImage src={src} alt="" seed={p.slug + i} /></button>)}
           </div>
         </div>
         <div className="flex flex-col gap-6">

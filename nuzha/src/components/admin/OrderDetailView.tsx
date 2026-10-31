@@ -4,14 +4,14 @@ import { useState } from "react";
 import { KV, Panel, StatusBadge, payLabel } from "./common";
 import { SmartImage } from "@/components/SmartImage";
 import { Badge, Button, Checkbox, Input } from "@/components/ui";
-import { byId } from "@/lib/catalog";
 import { num, timeFmt } from "@/lib/format";
 import type { Locale } from "@/lib/i18n";
-import { useStore } from "@/lib/store";
+import { findProduct, useStore } from "@/lib/store";
 
 export function OrderDetailView({ locale, id }: { locale: Locale; id: number }) {
   const o = useStore((s) => s.orders.find((x) => x.id === id));
   const hydrated = useStore((s) => s.hydrated);
+  const custom = useStore((s) => s.customProducts);
   const fulfil = useStore((s) => s.fulfil); const ship = useStore((s) => s.ship); const refund = useStore((s) => s.refund); const addNote = useStore((s) => s.addNote);
   const [showRefund, setShowRefund] = useState(false);
   const [amount, setAmount] = useState("");
@@ -39,7 +39,7 @@ export function OrderDetailView({ locale, id }: { locale: Locale; id: number }) 
       <div className="grid gap-4 md:grid-cols-[1fr_360px]">
         <div className="flex flex-col gap-4">
           <Panel title={`Items · ${o.items.reduce((n, i) => n + i.qty, 0)}`} action={<span className="text-xs text-ink-2">Dubai warehouse</span>}>
-            {o.items.map((it) => { const p = byId(it.productId); return (
+            {o.items.map((it) => { const p = findProduct({ customProducts: custom }, it.productId); return (
               <div key={it.productId + it.colour + it.size} className="flex items-center gap-4 text-sm">
                 <div className="h-12 w-12 shrink-0 overflow-hidden rounded-sm bg-highlight-subtle"><SmartImage src={it.image} alt="" seed={p?.slug} /></div>
                 <div className="flex-1"><div className="font-medium text-ink">{it.name}</div><div className="text-ink-2">{it.colour}{it.size ? ` · ${it.size}` : ""} · SKU {p?.sku}</div></div>

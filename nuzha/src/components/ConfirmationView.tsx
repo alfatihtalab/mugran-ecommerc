@@ -2,15 +2,15 @@
 import { Row } from "./CartDrawer";
 import { SmartImage } from "./SmartImage";
 import { Badge, Button } from "./ui";
-import { byId } from "@/lib/catalog";
 import { money } from "@/lib/format";
 import { fill, t, type Locale } from "@/lib/i18n";
-import { useStore } from "@/lib/store";
+import { findProduct, useStore } from "@/lib/store";
 
 export function ConfirmationView({ locale, id }: { locale: Locale; id: number }) {
   const d = t(locale);
   const hydrated = useStore((s) => s.hydrated);
   const order = useStore((s) => s.orders.find((o) => o.id === id));
+  const custom = useStore((s) => s.customProducts);
   if (!hydrated) return <div className="min-h-[60vh]" />;
   if (!order) return <div className="mx-auto max-w-[640px] px-5 py-20 text-center text-ink-2">{d.confirmation.notFound}</div>;
   const first = order.customer.name.split(" ")[0];
@@ -26,7 +26,7 @@ export function ConfirmationView({ locale, id }: { locale: Locale; id: number })
       <div className="flex w-full flex-col gap-4 rounded-md border border-line bg-surface p-6">
         <div className="flex items-center justify-between"><h2 className="font-display text-2xl text-ink">{d.confirmation.order} <span className="num">#{order.id}</span></h2><Badge tone="secondary">{payLabel}</Badge></div>
         <div>
-          {order.items.map((it) => { const p = byId(it.productId); return (
+          {order.items.map((it) => { const p = findProduct({ customProducts: custom }, it.productId); return (
             <div key={it.productId + it.colour + it.size} className="flex items-center gap-4 border-b border-line py-3">
               <div className="h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-highlight-subtle"><SmartImage src={it.image} alt="" seed={p?.slug} /></div>
               <div className="flex-1"><div className="text-sm font-medium text-ink">{p?.name[locale] ?? it.name}</div><div className="text-sm text-ink-2">{p?.colours.find((c) => c.name.en === it.colour)?.name[locale] ?? it.colour}{it.size ? ` · ${it.size}` : ""} · <span className="num">× {it.qty}</span></div></div>
