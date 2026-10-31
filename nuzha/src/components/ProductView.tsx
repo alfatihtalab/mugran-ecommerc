@@ -29,7 +29,7 @@ export function ProductView({ locale, id }: { locale: Locale; id: string }) {
       <div className="mb-6 text-xs text-ink-2"><Link href={`/${locale}`}>{d.collection.home}</Link> / <Link href={`/${locale}/collections/${cat.slug}`}>{cat.name[locale]}</Link> / {p.name[locale]}</div>
       <div className="grid gap-10 md:grid-cols-[minmax(0,640px)_1fr] md:gap-16">
         <div className="flex flex-col gap-3">
-          <div className="aspect-square overflow-hidden rounded-md bg-highlight-subtle"><SmartImage src={p.images[img]} alt={p.name[locale]} seed={p.slug + img} /></div>
+          <div className="aspect-square overflow-hidden rounded-md bg-highlight-subtle"><SmartImage key={img} src={p.images[img]} alt={p.name[locale]} seed={p.slug + img} className="animate-fade" /></div>
           <div className="grid grid-cols-4 gap-3">
             {p.images.map((src, i) => <button key={src} onClick={() => setImg(i)} className={`aspect-square overflow-hidden rounded-md bg-highlight-subtle ${i === img ? "ring-2 ring-line-strong" : ""}`}><SmartImage src={src} alt="" seed={p.slug + i} /></button>)}
           </div>
@@ -67,7 +67,7 @@ export function ProductView({ locale, id }: { locale: Locale; id: string }) {
             {acc.map(([h, b], i) => (
               <div key={h} className="border-b border-line py-4">
                 <button className="flex w-full items-center justify-between text-sm font-medium text-ink" onClick={() => setOpen(open === i ? null : i)}><span>{h}</span><span className="text-ink-2">{open === i ? "−" : "+"}</span></button>
-                {open === i && <p className="mt-3 max-w-lg text-sm text-ink-2">{b}</p>}
+                {open === i && <p className="animate-slide-down mt-3 max-w-lg text-sm text-ink-2">{b}</p>}
               </div>
             ))}
           </div>
@@ -75,7 +75,7 @@ export function ProductView({ locale, id }: { locale: Locale; id: string }) {
       </div>
       <section className="mt-16 flex flex-col gap-6">
         <h2 className="font-display text-3xl text-ink">{d.product.alsoLike}</h2>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">{related(p).map((r) => <ProductCard key={r.id} id={r.id} locale={locale} />)}</div>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">{related(p).map((r, i) => <ProductCard key={r.id} id={r.id} locale={locale} index={i} />)}</div>
       </section>
     </div>
   );

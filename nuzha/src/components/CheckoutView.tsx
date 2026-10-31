@@ -65,7 +65,7 @@ export function CheckoutView({ locale }: { locale: Locale }) {
     <div className="mx-auto max-w-[1440px] px-5 py-8 md:px-16 md:py-12">
       <div className="max-w-[640px]"><Stepper steps={d.checkout.steps} current={step} /></div>
       <div className="mt-10 grid gap-10 md:grid-cols-[1fr_480px] md:gap-16">
-        <div className="flex flex-col gap-6">
+        <div key={step} className="page-enter flex flex-col gap-6">
           {step > 1 && (
             <div className="flex items-center justify-between rounded-md border border-line bg-surface p-5">
               <div><div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-2">{d.checkout.contact}</div><div className="mt-1 text-sm text-ink">{f.email} · <span className="num">{f.phone}</span></div></div>

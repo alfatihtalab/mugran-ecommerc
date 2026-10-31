@@ -68,7 +68,7 @@ export function CollectionView({ locale, slug }: { locale: Locale; slug: string 
         </aside>
         <div>
           {list.length === 0 ? <div className="py-20 text-center text-ink-2">{d.collection.empty}</div> : (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6">{list.map((p) => <ProductCard key={p.id} id={p.id} locale={locale} />)}</div>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6">{list.map((p, i) => <ProductCard key={p.id} id={p.id} locale={locale} index={i % 6} />)}</div>
           )}
         </div>
       </div>

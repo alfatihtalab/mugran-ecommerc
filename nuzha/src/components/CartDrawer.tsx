@@ -61,8 +61,8 @@ export function CartDrawer({ locale }: { locale: Locale }) {
   const remaining = Math.max(0, freeOver - (totals.subtotal - totals.discount));
   return (
     <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-inverse/40" onClick={close} />
-      <aside className="absolute top-0 bottom-0 end-0 flex w-full max-w-[480px] flex-col bg-surface shadow-lg">
+      <div className="animate-fade absolute inset-0 bg-inverse/40" onClick={close} />
+      <aside className="animate-slide-end absolute top-0 bottom-0 end-0 flex w-full max-w-[480px] flex-col bg-surface shadow-lg">
         <div className="flex items-center justify-between border-b border-line px-6 py-5">
           <h2 className="font-display text-2xl text-ink">{d.cart.title} · <span className="num">{count}</span></h2>
           <button onClick={close} className="p-2 text-ink-2" aria-label="Close">✕</button>

@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 
 type BtnProps = { variant?: "primary" | "secondary" | "ghost"; size?: "md" | "sm"; href?: string; className?: string; children: React.ReactNode } & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "className">;
 
-const btnBase = "inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed select-none";
+const btnBase = "inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-all duration-200 active:scale-[0.97] disabled:cursor-not-allowed disabled:active:scale-100 select-none";
 const btnSize = { md: "px-5 py-3 text-sm", sm: "px-4 py-2 text-xs" };
 const btnVariant = {
   primary: "bg-accent text-on-accent hover:bg-accent-hover disabled:bg-muted disabled:text-disabled",

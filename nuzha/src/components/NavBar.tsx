@@ -33,7 +33,7 @@ export function NavBar({ locale }: { locale: Locale }) {
           <Link href={`/${locale}`} className="font-display text-2xl text-ink">{d.brand}</Link>
         </div>
         <nav className="hidden items-center gap-7 md:flex">
-          {links.map(([l, h]) => <Link key={h} href={h} className="text-sm text-ink hover:text-accent">{l}</Link>)}
+          {links.map(([l, h]) => <Link key={h} href={h} className="relative text-sm text-ink after:absolute after:-bottom-1 after:start-0 after:h-px after:w-full after:origin-start after:scale-x-0 after:bg-accent after:transition-transform after:duration-300 hover:text-accent hover:after:scale-x-100">{l}</Link>)}
         </nav>
         <div className="flex items-center gap-3">
           {(arEnabled || locale === "ar") && (
@@ -44,13 +44,13 @@ export function NavBar({ locale }: { locale: Locale }) {
             </Link>
           )}
           <Link href={`/${locale}/account`} className="hidden text-sm text-ink md:block">{d.nav.account}</Link>
-          <button onClick={openCart} className="whitespace-nowrap rounded-full bg-inverse px-4 py-2 text-xs font-medium text-ink-inv">
+          <button key={count} onClick={openCart} className={`whitespace-nowrap rounded-full bg-inverse px-4 py-2 text-xs font-medium text-ink-inv ${count > 0 ? "animate-pop" : ""}`}>
             {d.nav.cart} · <span className="num">{count}</span>
           </button>
         </div>
       </div>
       {open && (
-        <nav className="flex flex-col border-t border-line bg-surface px-5 py-3 md:hidden">
+        <nav className="animate-slide-down flex flex-col border-t border-line bg-surface px-5 py-3 md:hidden">
           {links.map(([l, h]) => <Link key={h} href={h} onClick={() => setOpen(false)} className="py-3 text-base text-ink">{l}</Link>)}
           <Link href={`/${locale}/account`} onClick={() => setOpen(false)} className="py-3 text-base text-ink">{d.nav.account}</Link>
         </nav>
