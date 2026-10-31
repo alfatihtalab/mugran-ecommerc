@@ -1,5 +1,8 @@
+import { locales } from "@/lib/i18n";
 import { notFound } from "next/navigation";
 import { isLocale, t, type Locale } from "@/lib/i18n";
+
+export function generateStaticParams() { return locales.flatMap((locale) => ["shipping", "returns", "payments", "contact", "about", "privacy", "terms"].map((slug) => ({ locale, slug }))); }
 
 export default async function InfoPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale: raw, slug } = await params;

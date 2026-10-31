@@ -1,7 +1,9 @@
+import { isLocale, locales, type Locale } from "@/lib/i18n";
+import { bySlug, products } from "@/lib/catalog";
 import { notFound } from "next/navigation";
 import { ProductView } from "@/components/ProductView";
-import { bySlug } from "@/lib/catalog";
-import { isLocale, type Locale } from "@/lib/i18n";
+
+export function generateStaticParams() { return locales.flatMap((locale) => products.map((p) => ({ locale, slug: p.slug }))); }
 
 export default async function ProductPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale: raw, slug } = await params;
